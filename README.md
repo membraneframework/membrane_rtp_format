@@ -1,4 +1,4 @@
-# Membrane Multimedia Framework: MPEG audio format definition
+# Membrane Multimedia Framework: RTP format definition
 
 This package provides RTP packet format definition (so-called caps) for the [Membrane Multimedia Framework](https://membraneframework.org).
 
