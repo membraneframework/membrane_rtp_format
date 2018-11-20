@@ -1,4 +1,4 @@
-defmodule Membrane.Caps.RTP.Packet.Header do
+defmodule Membrane.Caps.RTP.Header do
   alias __MODULE__
 
   @type t :: %Header{
