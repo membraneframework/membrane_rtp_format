@@ -4,15 +4,24 @@ defmodule Membrane.Caps.RTP do
   """
 
   @typedoc """
-  Standarized payload type id
+  RTP Payload type as number.
   """
-  @type payload_type :: pos_integer()
+  @type raw_payload_type :: 0..127
 
-  @type clock_rate :: pos_integer()
+  @typedoc """
+  RTP payload type as atom. Only for static payload types.
+  """
+  @type payload_type :: atom()
+
+  @typedoc """
+  The source of a stream of RTP packets, identified by a 32-bit numeric identifier.
+  """
+  @type ssrc :: pos_integer()
 
   @type t :: %__MODULE__{
           payload_type: payload_type(),
-          clock_rate: clock_rate()
+          ssrc: ssrc(),
+          raw_payload_type: payload_type()
         }
-  defstruct [:payload_type, :clock_rate]
+  defstruct [:payload_type, :raw_payload_type, :ssrc]
 end
