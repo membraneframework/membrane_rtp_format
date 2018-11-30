@@ -9,9 +9,48 @@ defmodule Membrane.Caps.RTP do
   @type raw_payload_type :: 0..127
 
   @typedoc """
+  Predefined static payload types
+  """
+  @type static_payload_type ::
+          :pcmu
+          | :gsm
+          | :g732
+          | :dvi4
+          | :dvi4
+          | :lpc
+          | :pcma
+          | :g722
+          | :l16
+          | :l16
+          | :qcelp
+          | :cn
+          | :mpa
+          | :g728
+          | :dvi4
+          | :dvi4
+          | :g729
+          | :celb
+          | :jpeg
+          | :nv
+          | :h261
+          | :mpv
+          | :mp2t
+          | :h263
+
+  @typedoc """
+  Value designating that dynamic type should be used
+  """
+  @type dynamic_payload_type :: :dynamic
+
+  @typedoc """
+  Reserved for future use.
+  """
+  @type reserved_payload_type :: :reserved
+
+  @typedoc """
   RTP payload type as atom. Only for static payload types.
   """
-  @type payload_type :: atom()
+  @type payload_type :: static_payload_type() | dynamic_payload_type() | reserved_payload_type()
 
   @typedoc """
   The source of a stream of RTP packets, identified by a 32-bit numeric identifier.
@@ -20,8 +59,9 @@ defmodule Membrane.Caps.RTP do
 
   @type t :: %__MODULE__{
           payload_type: payload_type(),
-          ssrc: ssrc(),
-          raw_payload_type: payload_type()
+          raw_payload_type: raw_payload_type()
         }
-  defstruct [:payload_type, :raw_payload_type, :ssrc]
+
+  @enforce_keys [:payload_type, :raw_payload_type]
+  defstruct @enforce_keys
 end

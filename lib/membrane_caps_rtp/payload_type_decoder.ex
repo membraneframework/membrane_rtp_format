@@ -1,46 +1,10 @@
 defmodule Membrane.Caps.RTP.PayloadTypeDecoder do
   alias Membrane.Caps.RTP
 
-  @typedoc """
-  Predefined static payload types
-  """
-  @type static_payload_type ::
-          :pcmu
-          | :gsm
-          | :g732
-          | :dvi4
-          | :dvi4
-          | :lpc
-          | :pcma
-          | :g722
-          | :l16
-          | :l16
-          | :qcelp
-          | :cn
-          | :mpa
-          | :g728
-          | :dvi4
-          | :dvi4
-          | :g729
-          | :celb
-          | :jpeg
-          | :nv
-          | :h261
-          | :mpv
-          | :mp2t
-          | :h263
-
-  @typedoc """
-  Value designating that dynamic type should be used
-  """
-  @type dynamic_payload_type :: :dynamic
-
-  @type payload_type :: static_payload_type() | dynamic_payload_type()
-
   @doc """
   Decodes numerical payload type to atom.
   """
-  @spec decode_payload_type(payload_type :: RTP.raw_payload_type()) :: payload_type()
+  @spec decode_payload_type(payload_type :: RTP.raw_payload_type()) :: RTP.payload_type()
   def decode_payload_type(type)
   def decode_payload_type(0), do: :pcmu
   def decode_payload_type(3), do: :gsm
@@ -66,6 +30,8 @@ defmodule Membrane.Caps.RTP.PayloadTypeDecoder do
   def decode_payload_type(32), do: :mpv
   def decode_payload_type(33), do: :mp2t
   def decode_payload_type(34), do: :h263
+
+  def decode_payload_type(pt) when pt in [1, 2, 19, 72, 73, 74, 75, 76], do: :reserved
 
   def decode_payload_type(payload_type) when payload_type in 0..127, do: :dynamic
 end
