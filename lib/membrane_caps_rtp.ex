@@ -43,14 +43,9 @@ defmodule Membrane.Caps.RTP do
   @type dynamic_payload_type :: :dynamic
 
   @typedoc """
-  Reserved for future use.
-  """
-  @type reserved_payload_type :: :reserved
-
-  @typedoc """
   RTP payload type as atom. Only for static payload types.
   """
-  @type payload_type :: static_payload_type() | dynamic_payload_type() | reserved_payload_type()
+  @type payload_type :: static_payload_type() | dynamic_payload_type()
 
   @typedoc """
   The source of a stream of RTP packets, identified by a 32-bit numeric identifier.
