@@ -4,12 +4,12 @@ defmodule Membrane.Caps.RTP do
   """
 
   @typedoc """
-  RTP Payload type as number.
+  RTP Payload type as a number.
   """
   @type raw_payload_type :: 0..127
 
   @typedoc """
-  Predefined static payload types
+  Predefined static payload types.
   """
   @type static_payload_type ::
           :pcmu
@@ -38,12 +38,12 @@ defmodule Membrane.Caps.RTP do
           | :h263
 
   @typedoc """
-  Value designating that dynamic type should be used
+  Value designating that dynamic type should be used.
   """
   @type dynamic_payload_type :: :dynamic
 
   @typedoc """
-  RTP payload type as atom. Only for static payload types.
+  RTP payload type as an atom. Only for static payload types.
   """
   @type payload_type :: static_payload_type() | dynamic_payload_type()
 
