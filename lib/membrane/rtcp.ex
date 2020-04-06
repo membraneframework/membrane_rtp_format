@@ -1,4 +1,4 @@
-defmodule Membrane.RTCP.Description do
+defmodule Membrane.RTCP do
   @moduledoc """
   Description of RTCP stream.
   """

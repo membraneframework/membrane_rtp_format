@@ -1,4 +1,4 @@
-defmodule Membrane.RTP.Description do
+defmodule Membrane.RTP do
   @moduledoc """
   This module provides caps struct for RTP packet.
   """
