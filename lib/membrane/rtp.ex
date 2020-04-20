@@ -6,12 +6,12 @@ defmodule Membrane.RTP do
   @typedoc """
   RTP Payload type as a number.
   """
-  @type raw_payload_type :: 0..127
+  @type raw_payload_type_t() :: 0..127
 
   @typedoc """
   Predefined static payload types.
   """
-  @type static_payload_type ::
+  @type static_payload_type_t() ::
           :pcmu
           | :gsm
           | :g732
@@ -40,21 +40,21 @@ defmodule Membrane.RTP do
   @typedoc """
   Value designating that dynamic type should be used.
   """
-  @type dynamic_payload_type :: :dynamic
+  @type dynamic_payload_type_t() :: :dynamic
 
   @typedoc """
   RTP payload type as an atom. Only for static payload types.
   """
-  @type payload_type :: static_payload_type() | dynamic_payload_type()
+  @type payload_type_t() :: static_payload_type_t() | dynamic_payload_type_t()
 
   @typedoc """
   The source of a stream of RTP packets, identified by a 32-bit numeric identifier.
   """
-  @type ssrc :: pos_integer()
+  @type ssrc_t() :: pos_integer()
 
-  @type t :: %__MODULE__{
-          payload_type: payload_type(),
-          raw_payload_type: raw_payload_type()
+  @type t() :: %__MODULE__{
+          payload_type: payload_type_t(),
+          raw_payload_type: raw_payload_type_t()
         }
 
   @enforce_keys [:payload_type, :raw_payload_type]
