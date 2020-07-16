@@ -1,8 +1,8 @@
-# Membrane Multimedia Framework: RTP format definition
+# Membrane Multimedia Framework: RTP format description
 
-[![CircleCI](https://circleci.com/gh/membraneframework/membrane-caps-rtp.svg?style=svg)](https://circleci.com/gh/membraneframework/membrane-caps-rtp)
+[![CircleCI](https://circleci.com/gh/membraneframework/membrane_rtp_format.svg?style=svg)](https://circleci.com/gh/membraneframework/membrane_rtp_format)
 
-This package provides RTP packet format definition (so-called caps) for the [Membrane Multimedia Framework](https://membraneframework.org).
+This package provides structures describing RTP/RTCP streams. They can be used to define capabilities of pads for the [Membrane](https://membraneframework.org) Elements.
 
 ## Installation
 
@@ -11,13 +11,13 @@ Unless you're developing an Membrane Element it's unlikely that you need to use 
 However, if you are developing an Element or need to add it due to any other reason, just add the following line to your `deps` in the `mix.exs` and run `mix deps.get`.
 
 ```elixir
-{:membrane_caps_rtp, "~> 0.1"}
+{:membrane_rtp_format, "~> 0.2"}
 ```
 
 ## Copyright and License
 
-Copyright 2018, [Software Mansion](https://swmansion.com/?utm_source=git&utm_medium=readme&utm_campaign=membrane)
+Copyright 2018, [Software Mansion](https://swmansion.com/?utm_source=git&utm_medium=readme&utm_campaign=membrane_rtp_format)
 
-[![Software Mansion](https://logo.swmansion.com/logo?color=white&variant=desktop&width=200&tag=membrane-github)](https://swmansion.com/?utm_source=git&utm_medium=readme&utm_campaign=membrane)
+[![Software Mansion](https://logo.swmansion.com/logo?color=white&variant=desktop&width=200&tag=membrane-github)](https://swmansion.com/?utm_source=git&utm_medium=readme&utm_campaign=membrane_rtp_format)
 
 Licensed under the [Apache License, Version 2.0](LICENSE)

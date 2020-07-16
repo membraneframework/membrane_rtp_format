@@ -1,25 +1,31 @@
-defmodule MembraneCapsRtp.MixProject do
+defmodule Membrane.RTP.Format.MixProject do
   use Mix.Project
 
-  @version "0.1.0"
-  @github_url "https://github.com/membraneframework/membrane-caps-rtp"
+  @version "0.2.0-alpha"
+  @github_url "https://github.com/membraneframework/membrane_rtp_format"
 
   def project do
     [
-      app: :membrane_caps_rtp,
-      elixir: "~> 1.7",
+      app: :membrane_rtp_format,
+      version: @version,
+      elixir: "~> 1.9",
       deps: deps(),
-      description: "Membrane Multimedia Framework (RTP format definition)",
-      docs: docs(),
+
+      # hex
+      description: "Membrane Multimedia Framework RTP/RTCP format description",
       package: package(),
-      start_permanent: Mix.env() == :prod,
-      version: @version
+
+      # docs
+      name: "Membrane RTP format",
+      source_url: @github_url,
+      homepage_url: "https://membraneframework.org",
+      docs: docs()
     ]
   end
 
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: []
     ]
   end
 
@@ -31,13 +37,6 @@ defmodule MembraneCapsRtp.MixProject do
     ]
   end
 
-  defp deps do
-    [
-      {:dialyxir, "~> 1.0.0-rc.4", only: [:dev], runtime: false},
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false}
-    ]
-  end
-
   defp package do
     [
       maintainers: ["Membrane Team"],
@@ -46,6 +45,13 @@ defmodule MembraneCapsRtp.MixProject do
         "GitHub" => @github_url,
         "Membrane Framework Homepage" => "https://membraneframework.org"
       }
+    ]
+  end
+
+  defp deps do
+    [
+      {:dialyxir, "~> 1.0.0", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.21", only: :dev, runtime: false}
     ]
   end
 end
