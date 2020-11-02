@@ -61,10 +61,7 @@ defmodule Membrane.RTP do
   """
   @type ssrc_t() :: pos_integer()
 
-  @type t() :: %__MODULE__{
-          payload_type: payload_type_t()
-        }
+  @type t() :: %__MODULE__{}
 
-  @enforce_keys [:payload_type]
-  defstruct @enforce_keys
+  defstruct []
 end
