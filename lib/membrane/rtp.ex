@@ -4,9 +4,19 @@ defmodule Membrane.RTP do
   """
 
   @typedoc """
-  RTP Payload type as a number.
+  RTP payload type that is statically mapped to encoding and clock rate.
   """
-  @type payload_type_t() :: 0..127
+  @type static_payload_type_t :: 0..95
+
+  @typedoc """
+  RTP payload type that can be dynamically to encoding and clock rate.
+  """
+  @type dynamic_payload_type_t :: 96..127
+
+  @typedoc """
+  RTP payload type.
+  """
+  @type payload_type_t() :: static_payload_type_t() | dynamic_payload_type_t()
 
   @typedoc """
   Predefined names of encoding for static payload types (< 96).
@@ -16,18 +26,14 @@ defmodule Membrane.RTP do
           | :GSM
           | :G732
           | :DVI4
-          | :DVI4
           | :LPC
           | :PCMA
           | :G722
-          | :L16
           | :L16
           | :QCELP
           | :CN
           | :MPA
           | :G728
-          | :DVI4
-          | :DVI4
           | :G729
           | :CELB
           | :JPEG
@@ -64,4 +70,14 @@ defmodule Membrane.RTP do
   @type t() :: %__MODULE__{}
 
   defstruct []
+
+  @doc """
+  Determines if payload type is `t:static_payload_type_t/0`.
+  """
+  defguard is_payload_type_static(payload_type) when payload_type in 0..95
+
+  @doc """
+  Determines if payload type is `t:dynamic_payload_type_t/0`.
+  """
+  defguard is_payload_type_dynamic(payload_type) when payload_type in 96..127
 end
