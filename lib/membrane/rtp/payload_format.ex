@@ -70,7 +70,7 @@ defmodule Membrane.RTP.PayloadFormat do
   end
 
   def get_payload_type_mapping(payload_type) when RTP.is_payload_type_dynamic(payload_type) do
-    Application.get_env(@app, {:payload_type, payload_type}, %{})
+    Application.get_env(@app, {:payload_type_mapping, payload_type}, %{})
   end
 
   @doc """
@@ -83,12 +83,12 @@ defmodule Membrane.RTP.PayloadFormat do
         ) :: :ok | no_return()
   def register_payload_type_mapping(payload_type, encoding_name, clock_rate)
       when RTP.is_payload_type_dynamic(payload_type) do
-    case Application.fetch_env(@app, {:payload_type, payload_type}) do
+    case Application.fetch_env(@app, {:payload_type_mapping, payload_type}) do
       {:ok, payload_format} ->
         raise "RTP payload type #{payload_type} already registered: #{inspect(payload_format)}"
 
       :error ->
-        Application.put_env(@app, {:payload_type, payload_type}, %{
+        Application.put_env(@app, {:payload_type_mapping, payload_type}, %{
           encoding_name: encoding_name,
           clock_rate: clock_rate
         })
