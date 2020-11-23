@@ -25,7 +25,8 @@ defmodule Membrane.RTP.Format.MixProject do
 
   def application do
     [
-      extra_applications: []
+      extra_applications: [],
+      mod: {Membrane.RTP.Format.App, []}
     ]
   end
 
