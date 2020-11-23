@@ -9,7 +9,7 @@ defmodule Membrane.RTP do
   @type static_payload_type_t :: 0..95
 
   @typedoc """
-  RTP payload type that can be dynamically to encoding and clock rate.
+  RTP payload type that can be dynamically mapped to encoding and clock rate.
   """
   @type dynamic_payload_type_t :: 96..127
 
