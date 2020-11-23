@@ -1,5 +1,7 @@
 # Membrane Multimedia Framework: RTP format description
 
+[![Hex.pm](https://img.shields.io/hexpm/v/membrane_rtp_format.svg)](https://hex.pm/packages/membrane_rtp_format)
+[![API Docs](https://img.shields.io/badge/api-docs-yellow.svg?style=flat)](https://hexdocs.pm/membrane_rtp_format/)
 [![CircleCI](https://circleci.com/gh/membraneframework/membrane_rtp_format.svg?style=svg)](https://circleci.com/gh/membraneframework/membrane_rtp_format)
 
 This package provides structures describing RTP/RTCP streams. They can be used to define capabilities of pads for the [Membrane](https://membraneframework.org) Elements.
@@ -11,7 +13,7 @@ Unless you're developing an Membrane Element it's unlikely that you need to use 
 However, if you are developing an Element or need to add it due to any other reason, just add the following line to your `deps` in the `mix.exs` and run `mix deps.get`.
 
 ```elixir
-{:membrane_rtp_format, "~> 0.2"}
+{:membrane_rtp_format, "~> 0.3.0"}
 ```
 
 ## Copyright and License
