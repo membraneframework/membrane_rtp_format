@@ -9,6 +9,8 @@ defmodule Membrane.RTP.PayloadFormat do
   require Membrane.RTP
 
   @app :membrane_rtp_format
+  @format_env :__membrane_format
+  @pt_env :__membrane_payload_type_mapping
 
   @payload_types_specs %{
     0 => %{encoding_name: :PCMU, clock_rate: 8000},
@@ -70,7 +72,7 @@ defmodule Membrane.RTP.PayloadFormat do
   end
 
   def get_payload_type_mapping(payload_type) when RTP.is_payload_type_dynamic(payload_type) do
-    Application.get_env(@app, {:payload_type_mapping, payload_type}, %{})
+    get_env(@pt_env, payload_type, %{})
   end
 
   @doc """
@@ -83,15 +85,12 @@ defmodule Membrane.RTP.PayloadFormat do
         ) :: :ok | no_return()
   def register_payload_type_mapping(payload_type, encoding_name, clock_rate)
       when RTP.is_payload_type_dynamic(payload_type) do
-    case Application.fetch_env(@app, {:payload_type_mapping, payload_type}) do
+    case fetch_env(@pt_env, payload_type) do
       {:ok, payload_format} ->
         raise "RTP payload type #{payload_type} already registered: #{inspect(payload_format)}"
 
       :error ->
-        Application.put_env(@app, {:payload_type_mapping, payload_type}, %{
-          encoding_name: encoding_name,
-          clock_rate: clock_rate
-        })
+        put_env(@pt_env, payload_type, %{encoding_name: encoding_name, clock_rate: clock_rate})
     end
   end
 
@@ -100,7 +99,7 @@ defmodule Membrane.RTP.PayloadFormat do
   """
   @spec get(RTP.encoding_name_t()) :: t
   def get(encoding_name) do
-    Application.get_env(@app, {:format, encoding_name}, %__MODULE__{encoding_name: encoding_name})
+    get_env(@format_env, encoding_name, %__MODULE__{encoding_name: encoding_name})
   end
 
   @doc """
@@ -111,10 +110,10 @@ defmodule Membrane.RTP.PayloadFormat do
   @spec register(t) :: :ok | no_return
   def register(%__MODULE__{encoding_name: encoding_name} = payload_format) do
     payload_format =
-      Application.get_env(@app, {:format, encoding_name}, %{})
+      get_env(@format_env, encoding_name, %{})
       |> Map.merge(payload_format, &merge_format(encoding_name, &1, &2, &3))
 
-    Application.put_env(@app, {:format, encoding_name}, payload_format)
+    put_env(@format_env, encoding_name, payload_format)
   end
 
   defp merge_format(_name, _k, nil, v), do: v
@@ -124,5 +123,21 @@ defmodule Membrane.RTP.PayloadFormat do
   defp merge_format(name, k, v1, v2) do
     raise "Cannot register RTP payload format #{name} field #{k} to #{inspect(v2)}, " <>
             "already registered to #{inspect(v1)}."
+  end
+
+  defp put_env(env_key, key, value) do
+    env = Application.get_env(@app, env_key, %{})
+    Application.put_env(@app, env_key, Map.put(env, key, value))
+  end
+
+  defp fetch_env(env_key, key) do
+    Application.get_env(@app, env_key, %{}) |> Map.fetch(key)
+  end
+
+  def get_env(env_key, key, default \\ nil) do
+    case fetch_env(env_key, key) do
+      {:ok, value} -> value
+      :error -> default
+    end
   end
 end
