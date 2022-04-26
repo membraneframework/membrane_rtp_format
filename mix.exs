@@ -33,7 +33,7 @@ defmodule Membrane.RTP.Format.MixProject do
   defp docs do
     [
       main: "readme",
-      extras: ["README.md"],
+      extras: ["README.md", "LICENSE"],
       source_ref: "v#{@version}"
     ]
   end
@@ -41,7 +41,7 @@ defmodule Membrane.RTP.Format.MixProject do
   defp package do
     [
       maintainers: ["Membrane Team"],
-      licenses: ["Apache 2.0"],
+      licenses: ["Apache-2.0"],
       links: %{
         "GitHub" => @github_url,
         "Membrane Framework Homepage" => "https://membraneframework.org"
@@ -51,8 +51,10 @@ defmodule Membrane.RTP.Format.MixProject do
 
   defp deps do
     [
+      {:membrane_core, "~> 0.9.0"},
       {:dialyxir, "~> 1.0.0", only: :dev, runtime: false},
-      {:ex_doc, "~> 0.21", only: :dev, runtime: false}
+      {:credo, "~> 1.6.4", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.28", only: :dev, runtime: false}
     ]
   end
 end
