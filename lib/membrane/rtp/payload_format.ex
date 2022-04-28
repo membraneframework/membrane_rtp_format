@@ -40,13 +40,14 @@ defmodule Membrane.RTP.PayloadFormat do
   }
 
   @enforce_keys [:encoding_name]
-  defstruct @enforce_keys ++ [payload_type: nil, payloader: nil, depayloader: nil]
+  defstruct @enforce_keys ++ [payload_type: nil, payloader: nil, depayloader: nil, keyframe_detector: nil]
 
   @type t :: %__MODULE__{
           encoding_name: RTP.encoding_name_t(),
           payload_type: RTP.payload_type_t() | nil,
           payloader: module | nil,
-          depayloader: module | nil
+          depayloader: module | nil,
+          keyframe_detector: function() | nil
         }
 
   @doc false
