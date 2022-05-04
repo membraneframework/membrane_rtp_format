@@ -1,4 +1,4 @@
-defmodule Membrane.SRTP.KeyingMaterial.Event do
+defmodule Membrane.SRTP.KeyingMaterialEvent do
   @moduledoc """
   Event containing keying material for SRTP encryptor and decryptor.
   """
