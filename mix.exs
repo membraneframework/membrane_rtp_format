@@ -37,6 +37,7 @@ defmodule Membrane.RTP.Format.MixProject do
     [
       main: "readme",
       extras: ["README.md", "LICENSE"],
+      formatters: ["html"],
       source_ref: "v#{@version}"
     ]
   end
