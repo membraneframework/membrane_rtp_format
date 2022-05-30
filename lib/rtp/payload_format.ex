@@ -54,8 +54,8 @@ defmodule Membrane.RTP.PayloadFormat do
           payload_type: RTP.payload_type_t() | nil,
           payloader: module | nil,
           depayloader: module | nil,
-          keyframe_detector: function() | nil,
-          frame_detector: function() | nil
+          keyframe_detector: (fun(binary()) -> boolean()) | nil,
+          frame_detector: (fun(binary()) -> boolean()) | nil
         }
 
   @doc false
