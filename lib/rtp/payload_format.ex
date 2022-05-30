@@ -4,9 +4,9 @@ defmodule Membrane.RTP.PayloadFormat do
   encoding names, clock rates and (de)payloaders.
   """
 
-  alias Membrane.RTP
-
   require Membrane.RTP
+
+  alias Membrane.RTP
 
   @app :membrane_rtp_format
   @format_env :__membrane_format
@@ -143,7 +143,7 @@ defmodule Membrane.RTP.PayloadFormat do
     Application.get_env(@app, env_key, %{}) |> Map.fetch(key)
   end
 
-  def get_env(env_key, key, default \\ nil) do
+  defp get_env(env_key, key, default) do
     case fetch_env(env_key, key) do
       {:ok, value} -> value
       :error -> default
