@@ -1,7 +1,7 @@
 defmodule Membrane.RTP.Format.MixProject do
   use Mix.Project
 
-  @version "0.5.0"
+  @version "0.6.0"
   @github_url "https://github.com/membraneframework/membrane_rtp_format"
 
   def project do
@@ -44,7 +44,7 @@ defmodule Membrane.RTP.Format.MixProject do
 
   defp deps do
     [
-      {:membrane_core, "~> 0.10.0"},
+      {:membrane_core, "~> 0.11.0"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:dialyxir, ">= 0.0.0", only: :dev, runtime: false},
       {:credo, ">= 0.0.0", only: :dev, runtime: false}
