@@ -50,8 +50,8 @@ defmodule Membrane.RTP.PayloadFormat do
               ]
 
   @type t :: %__MODULE__{
-          encoding_name: RTP.encoding_name_t(),
-          payload_type: RTP.payload_type_t() | nil,
+          encoding_name: RTP.encoding_name(),
+          payload_type: RTP.payload_type() | nil,
           payloader: module | nil,
           depayloader: module | nil,
           keyframe_detector: (binary() -> boolean()) | nil,
@@ -72,9 +72,9 @@ defmodule Membrane.RTP.PayloadFormat do
   @doc """
   Returns encoding name and clock rate for given payload type, if registered.
   """
-  @spec get_payload_type_mapping(RTP.payload_type_t()) :: %{
-          optional(:encoding_name) => RTP.encoding_name_t(),
-          optional(:clock_rate) => RTP.clock_rate_t()
+  @spec get_payload_type_mapping(RTP.payload_type()) :: %{
+          optional(:encoding_name) => RTP.encoding_name(),
+          optional(:clock_rate) => RTP.clock_rate()
         }
   def get_payload_type_mapping(payload_type) when RTP.is_payload_type_static(payload_type) do
     Map.fetch!(@payload_types_specs, payload_type)
@@ -88,9 +88,9 @@ defmodule Membrane.RTP.PayloadFormat do
   Registers default encoding name and clock rate for a dynamic payload_type
   """
   @spec register_payload_type_mapping(
-          RTP.dynamic_payload_type_t(),
-          RTP.encoding_name_t(),
-          RTP.clock_rate_t()
+          RTP.dynamic_payload_type(),
+          RTP.encoding_name(),
+          RTP.clock_rate()
         ) :: :ok | no_return()
   def register_payload_type_mapping(payload_type, encoding_name, clock_rate)
       when RTP.is_payload_type_dynamic(payload_type) do
@@ -106,7 +106,7 @@ defmodule Membrane.RTP.PayloadFormat do
   @doc """
   Returns payload format registered for given encoding name.
   """
-  @spec get(RTP.encoding_name_t()) :: t
+  @spec get(RTP.encoding_name()) :: t
   def get(encoding_name) do
     get_env(@format_env, encoding_name, %__MODULE__{encoding_name: encoding_name})
   end
