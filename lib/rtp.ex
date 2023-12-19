@@ -6,22 +6,22 @@ defmodule Membrane.RTP do
   @typedoc """
   RTP payload type that is statically mapped to encoding and clock rate.
   """
-  @type static_payload_type_t :: 0..95
+  @type static_payload_type :: 0..95
 
   @typedoc """
   RTP payload type that can be dynamically mapped to encoding and clock rate.
   """
-  @type dynamic_payload_type_t :: 96..127
+  @type dynamic_payload_type :: 96..127
 
   @typedoc """
   RTP payload type.
   """
-  @type payload_type_t() :: static_payload_type_t() | dynamic_payload_type_t()
+  @type payload_type() :: static_payload_type() | dynamic_payload_type()
 
   @typedoc """
   Predefined names of encoding for static payload types (< 96).
   """
-  @type static_encoding_name_t() ::
+  @type static_encoding_name() ::
           :PCMU
           | :GSM
           | :G732
@@ -50,34 +50,34 @@ defmodule Membrane.RTP do
   RFC for that payload format (e.g. for H264 there's RFC 6184 defining it must be "H264", so the atom `:H264` should be used
   https://tools.ietf.org/html/rfc6184#section-8.2.1)
   """
-  @type dynamic_encoding_name_t() :: atom()
+  @type dynamic_encoding_name() :: atom()
 
   @typedoc """
   Encoding name of RTP payload.
   """
-  @type encoding_name_t() :: static_encoding_name_t | dynamic_encoding_name_t()
+  @type encoding_name() :: static_encoding_name | dynamic_encoding_name()
 
   @typedoc """
   Rate of the clock used for RTP timestamps in Hz
   """
-  @type clock_rate_t() :: non_neg_integer()
+  @type clock_rate() :: non_neg_integer()
 
   @typedoc """
   The source of a stream of RTP packets, identified by a 32-bit numeric identifier.
   """
-  @type ssrc_t() :: pos_integer()
+  @type ssrc() :: pos_integer()
 
   @type t() :: %__MODULE__{}
 
   defstruct []
 
   @doc """
-  Determines if payload type is `t:static_payload_type_t/0`.
+  Determines if payload type is `t:static_payload_type/0`.
   """
   defguard is_payload_type_static(payload_type) when payload_type in 0..95
 
   @doc """
-  Determines if payload type is `t:dynamic_payload_type_t/0`.
+  Determines if payload type is `t:dynamic_payload_type/0`.
   """
   defguard is_payload_type_dynamic(payload_type) when payload_type in 96..127
 end
