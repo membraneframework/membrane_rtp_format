@@ -125,6 +125,85 @@ defmodule Membrane.RTP.PayloadFormat do
     put_env(@format_env, encoding_name, payload_format)
   end
 
+  @doc """
+  Quality of life function that makes best effort resolution of `PayloadFormat`, payload type and clock rate based
+  on provided arguments. Prefers provided values over registered defaults.
+  """
+  @spec resolve(
+          encoding_name: RTP.encoding_name() | nil,
+          payload_type: RTP.payload_type() | nil,
+          clock_rate: non_neg_integer() | nil
+        ) :: {payload_format :: t() | nil, RTP.payload_type() | nil, RTP.clock_rate() | nil}
+  def resolve(args) do
+    encoding_name = resolve_encoding_name(args[:encoding_name], args[:payload_type])
+    payload_format = resolve_payload_format(encoding_name, args[:payload_type])
+    payload_type = resolve_payload_type(args[:payload_type], payload_format)
+    clock_rate = resolve_clock_rate(args[:clock_rate], payload_type)
+
+    {payload_format, payload_type, clock_rate}
+  end
+
+  @spec resolve_encoding_name(RTP.encoding_name() | nil, RTP.payload_type() | nil) ::
+          RTP.encoding_name() | nil
+  defp resolve_encoding_name(encoding_name, payload_type) do
+    case {encoding_name, payload_type} do
+      {nil, nil} ->
+        nil
+
+      {nil, payload_type} ->
+        case get_payload_type_mapping(payload_type) do
+          %{encoding_name: registered_encoding_name} -> registered_encoding_name
+          _payload_type_mapping_not_registered -> nil
+        end
+
+      {encoding_name, _payload_type} ->
+        encoding_name
+    end
+  end
+
+  @spec resolve_payload_format(RTP.encoding_name() | nil, RTP.payload_type() | nil) :: t() | nil
+  defp resolve_payload_format(encoding_name, payload_type) do
+    case encoding_name do
+      nil ->
+        nil
+
+      encoding_name ->
+        registered_payload_format = get(encoding_name)
+
+        case payload_type do
+          nil -> registered_payload_format
+          payload_type -> %{registered_payload_format | payload_type: payload_type}
+        end
+    end
+  end
+
+  @spec resolve_payload_type(RTP.payload_type() | nil, t() | nil) :: RTP.payload_type() | nil
+  defp resolve_payload_type(payload_type, payload_format) do
+    case {payload_type, payload_format} do
+      {nil, nil} -> nil
+      {nil, payload_format} -> payload_format.payload_type
+      {payload_type, _payload_format} -> payload_type
+    end
+  end
+
+  @spec resolve_clock_rate(RTP.clock_rate() | nil, RTP.payload_type() | nil) ::
+          RTP.clock_rate() | nil
+  defp resolve_clock_rate(clock_rate, payload_type) do
+    case {clock_rate, payload_type} do
+      {nil, nil} ->
+        nil
+
+      {nil, payload_type} ->
+        case get_payload_type_mapping(payload_type) do
+          %{clock_rate: clock_rate} -> clock_rate
+          _payload_type_mapping_not_registered -> nil
+        end
+
+      {clock_rate, _payload_type} ->
+        clock_rate
+    end
+  end
+
   defp merge_format(_name, _k, nil, v), do: v
   defp merge_format(_name, _k, v, nil), do: v
   defp merge_format(_name, _k, v, v), do: v
