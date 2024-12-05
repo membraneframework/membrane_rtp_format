@@ -1,6 +1,6 @@
 defmodule Membrane.RTP.ResolveTest do
-  alias Membrane.RTP.PayloadFormat
   use ExUnit.Case
+  alias Membrane.RTP.PayloadFormat
 
   defmodule TestH263Depayloader do
   end
