@@ -133,14 +133,18 @@ defmodule Membrane.RTP.PayloadFormat do
           encoding_name: RTP.encoding_name() | nil,
           payload_type: RTP.payload_type() | nil,
           clock_rate: RTP.clock_rate() | nil
-        ) :: {payload_format :: t() | nil, RTP.payload_type() | nil, RTP.clock_rate() | nil}
+        ) :: %{
+          payload_format: t() | nil,
+          payload_type: RTP.payload_type() | nil,
+          clock_rate: RTP.clock_rate() | nil
+        }
   def resolve(args) do
     encoding_name = resolve_encoding_name(args[:encoding_name], args[:payload_type])
     payload_format = resolve_payload_format(encoding_name, args[:payload_type])
     payload_type = resolve_payload_type(args[:payload_type], payload_format)
     clock_rate = resolve_clock_rate(args[:clock_rate], payload_type)
 
-    {payload_format, payload_type, clock_rate}
+    %{payload_format: payload_format, payload_type: payload_type, clock_rate: clock_rate}
   end
 
   @spec resolve_encoding_name(RTP.encoding_name() | nil, RTP.payload_type() | nil) ::
