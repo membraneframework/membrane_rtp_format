@@ -57,10 +57,10 @@ defmodule Membrane.RTP.ResolveTest do
 
     test "when encoding name wasn't provided, but payload type was" do
       assert %{
-               payload_format: %PayloadFormat{encoding_name: :H263, payload_type: 34},
-               payload_type: 34,
-               clock_rate: 90_000
-             } = PayloadFormat.resolve(payload_type: 34)
+               payload_format: %PayloadFormat{encoding_name: :PCMU, payload_type: 0},
+               payload_type: 0,
+               clock_rate: 8_000
+             } = PayloadFormat.resolve(payload_type: 0)
 
       assert %{payload_format: @czumpi_payload_format, payload_type: 126, clock_rate: 2007} =
                PayloadFormat.resolve(payload_type: 126)
