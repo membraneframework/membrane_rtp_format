@@ -20,6 +20,11 @@ defmodule Membrane.RTP.ResolveTest do
     depayloader: TestCzumpiDepayloader
   }
 
+  @custom_payload_type_mapping %{
+    126 => %{encoding_name: :Sysy, clock_rate: 1234},
+    107 => %{encoding_name: :Czumpi, clock_rate: 2007}
+  }
+
   setup_all do
     PayloadFormat.register(@h263_payload_format)
     PayloadFormat.register(@czumpi_payload_format)
@@ -90,6 +95,28 @@ defmodule Membrane.RTP.ResolveTest do
                payload_type: 126,
                clock_rate: 2007
              } = PayloadFormat.resolve(encoding_name: :Szymon, payload_type: 126)
+    end
+
+    test "for custom type mapping" do
+      assert %{
+               payload_format: %PayloadFormat{encoding_name: :Czumpi, payload_type: 107},
+               payload_type: 107,
+               clock_rate: 2007
+             } =
+               PayloadFormat.resolve(
+                 payload_type: 107,
+                 payload_type_mapping: @custom_payload_type_mapping
+               )
+
+      assert %{
+               payload_format: %PayloadFormat{encoding_name: :Sysy, payload_type: 126},
+               payload_type: 126,
+               clock_rate: 1234
+             } =
+               PayloadFormat.resolve(
+                 payload_type: 126,
+                 payload_type_mapping: @custom_payload_type_mapping
+               )
     end
   end
 end
