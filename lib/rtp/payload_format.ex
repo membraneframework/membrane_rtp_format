@@ -39,6 +39,13 @@ defmodule Membrane.RTP.PayloadFormat do
     34 => %{encoding_name: :H263, clock_rate: 90_000}
   }
 
+  @type payload_type_mapping :: %{
+          RTP.payload_type() => %{
+            encoding_name: RTP.encoding_name(),
+            clock_rate: RTP.clock_rate()
+          }
+        }
+
   @enforce_keys [:encoding_name]
   defstruct @enforce_keys ++
               [
@@ -132,32 +139,42 @@ defmodule Membrane.RTP.PayloadFormat do
   @spec resolve(
           encoding_name: RTP.encoding_name() | nil,
           payload_type: RTP.payload_type() | nil,
-          clock_rate: RTP.clock_rate() | nil
+          clock_rate: RTP.clock_rate() | nil,
+          payload_type_mapping: payload_type_mapping() | nil
         ) :: %{
           payload_format: t() | nil,
           payload_type: RTP.payload_type() | nil,
           clock_rate: RTP.clock_rate() | nil
         }
   def resolve(args) do
-    encoding_name = resolve_encoding_name(args[:encoding_name], args[:payload_type])
+    encoding_name =
+      resolve_encoding_name(
+        args[:encoding_name],
+        args[:payload_type],
+        args[:payload_type_mapping]
+      )
+
     payload_format = resolve_payload_format(encoding_name, args[:payload_type])
     payload_type = resolve_payload_type(args[:payload_type], payload_format)
-    clock_rate = resolve_clock_rate(args[:clock_rate], payload_type)
+    clock_rate = resolve_clock_rate(args[:clock_rate], payload_type, args[:payload_type_mapping])
 
     %{payload_format: payload_format, payload_type: payload_type, clock_rate: clock_rate}
   end
 
-  @spec resolve_encoding_name(RTP.encoding_name() | nil, RTP.payload_type() | nil) ::
-          RTP.encoding_name() | nil
-  defp resolve_encoding_name(encoding_name, payload_type) do
+  @spec resolve_encoding_name(
+          RTP.encoding_name() | nil,
+          RTP.payload_type() | nil,
+          payload_type_mapping() | nil
+        ) :: RTP.encoding_name() | nil
+  defp resolve_encoding_name(encoding_name, payload_type, payload_type_mapping) do
     case {encoding_name, payload_type} do
       {nil, nil} ->
         nil
 
       {nil, payload_type} ->
-        case get_payload_type_mapping(payload_type) do
+        case resolve_payload_type_mapping(payload_type_mapping, payload_type) do
           %{encoding_name: registered_encoding_name} -> registered_encoding_name
-          _payload_type_mapping_not_registered -> nil
+          nil -> nil
         end
 
       {encoding_name, _payload_type} ->
@@ -190,21 +207,39 @@ defmodule Membrane.RTP.PayloadFormat do
     end
   end
 
-  @spec resolve_clock_rate(RTP.clock_rate() | nil, RTP.payload_type() | nil) ::
-          RTP.clock_rate() | nil
-  defp resolve_clock_rate(clock_rate, payload_type) do
+  @spec resolve_clock_rate(
+          RTP.clock_rate() | nil,
+          RTP.payload_type() | nil,
+          payload_type_mapping() | nil
+        ) :: RTP.clock_rate() | nil
+  defp resolve_clock_rate(clock_rate, payload_type, payload_type_mapping) do
     case {clock_rate, payload_type} do
       {nil, nil} ->
         nil
 
       {nil, payload_type} ->
-        case get_payload_type_mapping(payload_type) do
+        case resolve_payload_type_mapping(payload_type_mapping, payload_type) do
           %{clock_rate: clock_rate} -> clock_rate
-          _payload_type_mapping_not_registered -> nil
+          nil -> nil
         end
 
       {clock_rate, _payload_type} ->
         clock_rate
+    end
+  end
+
+  @spec resolve_payload_type_mapping(payload_type_mapping() | nil, RTP.payload_type()) ::
+          %{encoding_name: RTP.encoding_name(), clock_rate: RTP.clock_rate()} | nil
+  defp resolve_payload_type_mapping(payload_type_mapping, payload_type) do
+    case payload_type_mapping do
+      nil ->
+        case get_payload_type_mapping(payload_type) do
+          %{encoding_name: _encoding_name, clock_rate: _clock_rate} = mapping -> mapping
+          %{} -> nil
+        end
+
+      payload_type_mapping ->
+        Map.get(payload_type_mapping, payload_type)
     end
   end
 
