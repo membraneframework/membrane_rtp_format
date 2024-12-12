@@ -147,63 +147,70 @@ defmodule Membrane.RTP.PayloadFormat do
           clock_rate: RTP.clock_rate() | nil
         }
   def resolve(args) do
-    encoding_name =
-      resolve_encoding_name(
-        args[:encoding_name],
-        args[:payload_type],
-        args[:payload_type_mapping]
-      )
+    {encoding_name, payload_type} =
+      case {args[:encoding_name], args[:payload_type]} do
+        {nil, nil} ->
+          {nil, nil}
 
-    payload_format = resolve_payload_format(encoding_name, args[:payload_type])
-    payload_type = resolve_payload_type(args[:payload_type], payload_format)
+        {nil, payload_type} ->
+          {resolve_encoding_name(payload_type, args[:payload_type_mapping]), payload_type}
+
+        {encoding_name, nil} ->
+          {encoding_name, resolve_payload_type(encoding_name, args[:payload_type_mapping])}
+
+        {encoding_name, payload_type} ->
+          {encoding_name, payload_type}
+      end
+
+    payload_format = resolve_payload_format(encoding_name, payload_type)
     clock_rate = resolve_clock_rate(args[:clock_rate], payload_type, args[:payload_type_mapping])
 
     %{payload_format: payload_format, payload_type: payload_type, clock_rate: clock_rate}
   end
 
-  @spec resolve_encoding_name(
-          RTP.encoding_name() | nil,
-          RTP.payload_type() | nil,
-          payload_type_mapping() | nil
-        ) :: RTP.encoding_name() | nil
-  defp resolve_encoding_name(encoding_name, payload_type, payload_type_mapping) do
-    case {encoding_name, payload_type} do
-      {nil, nil} ->
-        nil
+  @spec resolve_encoding_name(RTP.payload_type(), payload_type_mapping() | nil) ::
+          RTP.encoding_name() | nil
+  defp resolve_encoding_name(payload_type, nil) do
+    case get_payload_type_mapping(payload_type) do
+      %{encoding_name: encoding_name} -> encoding_name
+      %{} -> nil
+    end
+  end
 
-      {nil, payload_type} ->
-        case resolve_payload_type_mapping(payload_type_mapping, payload_type) do
-          %{encoding_name: registered_encoding_name} -> registered_encoding_name
-          nil -> nil
-        end
+  defp resolve_encoding_name(payload_type, payload_type_mapping) do
+    case Map.get(payload_type_mapping, payload_type) do
+      %{encoding_name: encoding_name} -> encoding_name
+      nil -> resolve_encoding_name(payload_type, nil)
+    end
+  end
 
-      {encoding_name, _payload_type} ->
-        encoding_name
+  @spec resolve_payload_type(RTP.encoding_name(), payload_type_mapping() | nil) ::
+          RTP.payload_type() | nil
+  defp resolve_payload_type(encoding_name, nil) do
+    get(encoding_name).payload_type
+  end
+
+  defp resolve_payload_type(encoding_name, payload_type_mapping) do
+    Enum.find(payload_type_mapping, fn {_payload_type, payload_type_specs} ->
+      payload_type_specs.encoding_name == encoding_name
+    end)
+    |> case do
+      {payload_type, _payload_type_specs} -> payload_type
+      nil -> resolve_payload_type(encoding_name, nil)
     end
   end
 
   @spec resolve_payload_format(RTP.encoding_name() | nil, RTP.payload_type() | nil) :: t() | nil
-  defp resolve_payload_format(encoding_name, payload_type) do
-    case encoding_name do
-      nil ->
-        nil
-
-      encoding_name ->
-        registered_payload_format = get(encoding_name)
-
-        case payload_type do
-          nil -> registered_payload_format
-          payload_type -> %{registered_payload_format | payload_type: payload_type}
-        end
-    end
+  defp resolve_payload_format(nil, _payload_type) do
+    nil
   end
 
-  @spec resolve_payload_type(RTP.payload_type() | nil, t() | nil) :: RTP.payload_type() | nil
-  defp resolve_payload_type(payload_type, payload_format) do
-    case {payload_type, payload_format} do
-      {nil, nil} -> nil
-      {nil, payload_format} -> payload_format.payload_type
-      {payload_type, _payload_format} -> payload_type
+  defp resolve_payload_format(encoding_name, payload_type) do
+    payload_format = get(encoding_name)
+
+    case payload_type do
+      nil -> payload_format
+      payload_type -> %{payload_format | payload_type: payload_type}
     end
   end
 
@@ -212,35 +219,26 @@ defmodule Membrane.RTP.PayloadFormat do
           RTP.payload_type() | nil,
           payload_type_mapping() | nil
         ) :: RTP.clock_rate() | nil
-  defp resolve_clock_rate(clock_rate, payload_type, payload_type_mapping) do
-    case {clock_rate, payload_type} do
-      {nil, nil} ->
-        nil
+  defp resolve_clock_rate(nil, nil, _payload_type_mapping) do
+    nil
+  end
 
-      {nil, payload_type} ->
-        case resolve_payload_type_mapping(payload_type_mapping, payload_type) do
-          %{clock_rate: clock_rate} -> clock_rate
-          nil -> nil
-        end
-
-      {clock_rate, _payload_type} ->
-        clock_rate
+  defp resolve_clock_rate(nil, payload_type, nil) do
+    case get_payload_type_mapping(payload_type) do
+      %{clock_rate: clock_rate} -> clock_rate
+      %{} -> nil
     end
   end
 
-  @spec resolve_payload_type_mapping(payload_type_mapping() | nil, RTP.payload_type()) ::
-          %{encoding_name: RTP.encoding_name(), clock_rate: RTP.clock_rate()} | nil
-  defp resolve_payload_type_mapping(payload_type_mapping, payload_type) do
-    case payload_type_mapping do
-      nil ->
-        case get_payload_type_mapping(payload_type) do
-          %{encoding_name: _encoding_name, clock_rate: _clock_rate} = mapping -> mapping
-          %{} -> nil
-        end
-
-      payload_type_mapping ->
-        Map.get(payload_type_mapping, payload_type)
+  defp resolve_clock_rate(nil, payload_type, payload_type_mapping) do
+    case Map.get(payload_type_mapping, payload_type) do
+      %{clock_rate: clock_rate} -> clock_rate
+      nil -> resolve_clock_rate(nil, payload_type, nil)
     end
+  end
+
+  defp resolve_clock_rate(clock_rate, _payload_type, _payload_type_mapping) do
+    clock_rate
   end
 
   defp merge_format(_name, _k, nil, v), do: v

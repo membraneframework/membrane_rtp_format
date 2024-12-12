@@ -58,6 +58,12 @@ defmodule Membrane.RTP.ResolveTest do
                clock_rate: 30_000
              } =
                PayloadFormat.resolve(encoding_name: :H2137, payload_type: 111, clock_rate: 30_000)
+
+      assert %{
+               payload_format: %PayloadFormat{encoding_name: :PCMU, payload_type: 0},
+               payload_type: 0,
+               clock_rate: 8_000
+             } = PayloadFormat.resolve(encoding_name: :PCMU)
     end
 
     test "when encoding name wasn't provided, but payload type was" do
@@ -115,6 +121,16 @@ defmodule Membrane.RTP.ResolveTest do
              } =
                PayloadFormat.resolve(
                  payload_type: 126,
+                 payload_type_mapping: @custom_payload_type_mapping
+               )
+
+      assert %{
+               payload_format: %PayloadFormat{encoding_name: :Sysy, payload_type: 126},
+               payload_type: 126,
+               clock_rate: 1234
+             } =
+               PayloadFormat.resolve(
+                 encoding_name: :Sysy,
                  payload_type_mapping: @custom_payload_type_mapping
                )
     end
