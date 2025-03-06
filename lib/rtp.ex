@@ -67,9 +67,14 @@ defmodule Membrane.RTP do
   """
   @type ssrc() :: pos_integer()
 
-  @type t() :: %__MODULE__{}
+  @typedoc """
+  Module of a Membrane stream format which represents the payload format of this stream or `nil` if the payload format is not known.
+  """
+  @type payload_format :: module() | nil
 
-  defstruct []
+  @type t() :: %__MODULE__{payload_format: payload_format()}
+
+  defstruct [:payload_format]
 
   @doc """
   Determines if payload type is `t:static_payload_type/0`.

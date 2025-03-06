@@ -13,7 +13,7 @@ Unless you're developing an Membrane Element it's unlikely that you need to use 
 However, if you are developing an Element or need to add it due to any other reason, just add the following line to your `deps` in the `mix.exs` and run `mix deps.get`.
 
 ```elixir
-	{:membrane_rtp_format, "~> 0.10.0"}
+	{:membrane_rtp_format, "~> 0.11.0"}
 ```
 
 ## Copyright and License
